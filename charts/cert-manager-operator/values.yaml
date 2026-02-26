@@ -1,0 +1,3 @@
+# cert-manager Operator Helm Chart
+bundle:
+  version: "v1.15.2"
