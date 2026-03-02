@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: deployment
     app.kubernetes.io/part-of: cert-manager-operator
   name: cert-manager-operator-controller-manager
-  namespace: cert-manager-operator
+  namespace: {{ .Values.operatorNamespace }}
 spec:
   replicas: 1
   selector:
@@ -21,7 +21,7 @@ spec:
         kubectl.kubernetes.io/default-container: cert-manager-operator
       labels:
         name: cert-manager-operator
-      namespace: cert-manager-operator
+      namespace: {{ .Values.operatorNamespace }}
     spec:
       affinity:
         nodeAffinity:

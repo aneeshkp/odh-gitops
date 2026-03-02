@@ -59,7 +59,9 @@ echo "Extracted $(wc -l < "$TMP_DIR/manifests.yaml") lines"
 # Clean: remove all CRDs and templates (only after successful extraction)
 echo "[2/3] Cleaning old manifests..."
 find "$CHART_DIR/crds" -name "*.yaml" -delete 2>/dev/null || true
-find "$CHART_DIR/templates" -name "*.yaml" -delete 2>/dev/null || true
+find "$CHART_DIR/templates" -name "*.yaml" \
+  ! -name "namespace.yaml" \
+  -delete 2>/dev/null || true
 
 # Split manifests (no templatization)
 echo "[3/3] Splitting into CRDs and templates..."
@@ -111,8 +113,11 @@ for doc in docs:
         else:
             filepath = os.path.join(templates_dir, filename)
             other_count += 1
+            # Templatize namespace references
+            content = doc.strip()
+            content = content.replace('namespace: istio-system', 'namespace: {{ .Values.namespace }}')
             with open(filepath, 'w') as out:
-                out.write(doc.strip() + '\n')
+                out.write(content + '\n')
 
     except Exception as e:
         print(f"Error processing manifest: {e}", file=__import__('sys').stderr)

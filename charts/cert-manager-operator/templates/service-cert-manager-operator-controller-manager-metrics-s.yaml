@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/part-of: cert-manager-operator
     control-plane: controller-manager
   name: cert-manager-operator-controller-manager-metrics-service
-  namespace: cert-manager-operator
+  namespace: {{ .Values.operatorNamespace }}
 spec:
   ports:
     - name: https

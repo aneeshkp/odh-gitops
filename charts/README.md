@@ -37,7 +37,7 @@ EOF
 
 ### Auth Reader RoleBinding (required for lws-operator)
 
-On OpenShift, all authenticated service accounts can read the `extension-apiserver-authentication` configmap in `kube-system`. On vanilla Kubernetes, this binding doesn't exist and operators like LWS will crash on startup. Create it once for the cluster:
+Kubernetes addon API servers need to read the `extension-apiserver-authentication` configmap in `kube-system` for authentication delegation (see [apiserver auth docs](https://github.com/kubernetes-sigs/apiserver-builder-alpha/blob/master/docs/concepts/auth.md)). On OpenShift, all authenticated service accounts already have this access. On vanilla Kubernetes, this binding doesn't exist and operators like LWS will crash on startup. Create it once for the cluster before installing:
 
 ```bash
 kubectl apply -f - <<EOF
@@ -60,10 +60,12 @@ EOF
 ## Installation
 
 ```bash
-helm install cert-manager-operator charts/cert-manager-operator/ --namespace cert-manager-operator --create-namespace
-helm install lws-operator charts/lws-operator/ --namespace openshift-lws-operator --create-namespace
-helm install sail-operator charts/sail-operator/ --namespace istio-system --create-namespace
+helm install cert-manager-operator charts/cert-manager-operator/
+helm install lws-operator charts/lws-operator/
+helm install sail-operator charts/sail-operator/
 ```
+
+Each chart creates its own namespace from `values.yaml` defaults.
 
 ## Post-Install Steps
 
