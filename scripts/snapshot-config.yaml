@@ -109,3 +109,12 @@ charts:
         setFlags:
           - coreweave.enabled=true
           - imagePullSecret.dockerConfigJson=testauth
+
+      - name: aws
+        setFlags:
+          - aws.enabled=true
+
+      - name: aws-with-pull-secret
+        setFlags:
+          - aws.enabled=true
+          - imagePullSecret.dockerConfigJson=testauth

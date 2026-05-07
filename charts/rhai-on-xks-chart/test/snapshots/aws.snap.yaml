@@ -1,5 +1,5 @@
 ---
-# Source: rhai-on-xks-chart/templates/cloudmanager/azure/manager/namespace-rhai-cloudmanager-system.yaml
+# Source: rhai-on-xks-chart/templates/cloudmanager/aws/manager/namespace-rhai-cloudmanager-system.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -17,46 +17,12 @@ kind: Namespace
 metadata:
   name: redhat-ods-operator
 ---
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: cert-manager-operator
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: cert-manager
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: openshift-lws-operator
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: istio-system
----
-# Source: rhai-on-xks-chart/templates/cloudmanager/azure/rbac/serviceaccount-azure-cloud-manager-operator.yaml
+# Source: rhai-on-xks-chart/templates/cloudmanager/aws/rbac/serviceaccount-aws-cloud-manager-operator.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: azure-cloud-manager-operator
+  name: aws-cloud-manager-operator
   namespace: rhai-cloudmanager-system
-imagePullSecrets:
-  - name: rhai-pull-secret
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-# TODO: This is a temporary solution to inject the pull secret into the llmisvc-controller-manager service account.
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: llmisvc-controller-manager
-  namespace: redhat-ods-applications
 imagePullSecrets:
   - name: rhai-pull-secret
 ---
@@ -69,125 +35,21 @@ metadata:
 imagePullSecrets:
   - name: rhai-pull-secret
 ---
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rhai-pull-secret
-  namespace: redhat-ods-operator
-  labels:
-    helm.sh/chart: HELM_CHART_VERSION_REDACTED
-    app.kubernetes.io/managed-by: Helm
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: dGVzdGF1dGg=
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rhai-pull-secret
-  namespace: redhat-ods-applications
-  labels:
-    helm.sh/chart: HELM_CHART_VERSION_REDACTED
-    app.kubernetes.io/managed-by: Helm
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: dGVzdGF1dGg=
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rhai-pull-secret
-  namespace: default
-  labels:
-    helm.sh/chart: HELM_CHART_VERSION_REDACTED
-    app.kubernetes.io/managed-by: Helm
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: dGVzdGF1dGg=
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rhai-pull-secret
-  namespace: rhai-cloudmanager-system
-  labels:
-    helm.sh/chart: HELM_CHART_VERSION_REDACTED
-    app.kubernetes.io/managed-by: Helm
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: dGVzdGF1dGg=
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rhai-pull-secret
-  namespace: cert-manager-operator
-  labels:
-    helm.sh/chart: HELM_CHART_VERSION_REDACTED
-    app.kubernetes.io/managed-by: Helm
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: dGVzdGF1dGg=
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rhai-pull-secret
-  namespace: cert-manager
-  labels:
-    helm.sh/chart: HELM_CHART_VERSION_REDACTED
-    app.kubernetes.io/managed-by: Helm
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: dGVzdGF1dGg=
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rhai-pull-secret
-  namespace: openshift-lws-operator
-  labels:
-    helm.sh/chart: HELM_CHART_VERSION_REDACTED
-    app.kubernetes.io/managed-by: Helm
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: dGVzdGF1dGg=
----
-# Source: rhai-on-xks-chart/templates/pull-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rhai-pull-secret
-  namespace: istio-system
-  labels:
-    helm.sh/chart: HELM_CHART_VERSION_REDACTED
-    app.kubernetes.io/managed-by: Helm
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: dGVzdGF1dGg=
----
-# Source: rhai-on-xks-chart/templates/cloudmanager/azure/crds/customresourcedefinition-azurekubernetesengines.infrastructure.opendatahub.io.yaml
+# Source: rhai-on-xks-chart/templates/cloudmanager/aws/crds/customresourcedefinition-awskubernetesengines.infrastructure.opendatahub.io.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.17.3
     helm.sh/resource-policy: keep
-  name: azurekubernetesengines.infrastructure.opendatahub.io
+  name: awskubernetesengines.infrastructure.opendatahub.io
 spec:
   group: infrastructure.opendatahub.io
   names:
-    kind: AzureKubernetesEngine
-    listKind: AzureKubernetesEngineList
-    plural: azurekubernetesengines
-    singular: azurekubernetesengine
+    kind: AWSKubernetesEngine
+    listKind: AWSKubernetesEngineList
+    plural: awskubernetesengines
+    singular: awskubernetesengine
   scope: Cluster
   versions:
     - additionalPrinterColumns:
@@ -207,8 +69,8 @@ spec:
       schema:
         openAPIV3Schema:
           description: |-
-            AzureKubernetesEngine is the Schema for the azurekubernetesengines API.
-            It represents the configuration for an Azure Kubernetes Service (AKS) cluster.
+            AWSKubernetesEngine is the Schema for the awskubernetesengines API.
+            It represents the configuration for an AWS Kubernetes Service cluster.
           properties:
             apiVersion:
               description: |-
@@ -228,10 +90,10 @@ spec:
             metadata:
               type: object
             spec:
-              description: AzureKubernetesEngineSpec defines the desired state of AzureKubernetesEngine.
+              description: AWSKubernetesEngineSpec defines the desired state of AWSKubernetesEngine.
               properties:
                 dependencies:
-                  description: Dependencies defines the dependency configurations for the Azure Kubernetes Engine.
+                  description: Dependencies defines the dependency configurations for the AWS Kubernetes Engine.
                   properties:
                     certManager:
                       description: CertManager defines the cert-manager operator dependency.
@@ -326,7 +188,7 @@ spec:
                   type: object
               type: object
             status:
-              description: AzureKubernetesEngineStatus defines the observed state of AzureKubernetesEngine.
+              description: AWSKubernetesEngineStatus defines the observed state of AWSKubernetesEngine.
               properties:
                 conditions:
                   items:
@@ -392,8 +254,8 @@ spec:
               type: object
           type: object
           x-kubernetes-validations:
-            - message: AzureKubernetesEngine name must be default-azurekubernetesengine
-              rule: self.metadata.name == 'default-azurekubernetesengine'
+            - message: AWSKubernetesEngine name must be default-awskubernetesengine
+              rule: self.metadata.name == 'default-awskubernetesengine'
       served: true
       storage: true
       subresources:
@@ -593,11 +455,11 @@ spec:
       subresources:
         status: {}
 ---
-# Source: rhai-on-xks-chart/templates/cloudmanager/azure/rbac/clusterrole-rhai-azure-cloud-manager-role.yaml
+# Source: rhai-on-xks-chart/templates/cloudmanager/aws/rbac/clusterrole-rhai-aws-cloud-manager-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: rhai-azure-cloud-manager-role
+  name: rhai-aws-cloud-manager-role
 rules:
   - apiGroups:
       - ""
@@ -686,7 +548,7 @@ rules:
   - apiGroups:
       - infrastructure.opendatahub.io
     resources:
-      - azurekubernetesengines
+      - awskubernetesengines
     verbs:
       - create
       - delete
@@ -698,13 +560,13 @@ rules:
   - apiGroups:
       - infrastructure.opendatahub.io
     resources:
-      - azurekubernetesengines/finalizers
+      - awskubernetesengines/finalizers
     verbs:
       - update
   - apiGroups:
       - infrastructure.opendatahub.io
     resources:
-      - azurekubernetesengines/status
+      - awskubernetesengines/status
     verbs:
       - get
       - patch
@@ -2238,18 +2100,18 @@ rules:
       - update
       - watch
 ---
-# Source: rhai-on-xks-chart/templates/cloudmanager/azure/rbac/clusterrolebinding-rhai-azure-cloud-manager-rolebinding.yaml
+# Source: rhai-on-xks-chart/templates/cloudmanager/aws/rbac/clusterrolebinding-rhai-aws-cloud-manager-rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: rhai-azure-cloud-manager-rolebinding
+  name: rhai-aws-cloud-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: rhai-azure-cloud-manager-role
+  name: rhai-aws-cloud-manager-role
 subjects:
   - kind: ServiceAccount
-    name: azure-cloud-manager-operator
+    name: aws-cloud-manager-operator
     namespace: rhai-cloudmanager-system
 ---
 # Source: rhai-on-xks-chart/templates/rbac/clusterrolebinding-rhods-operator-rolebinding.yaml
@@ -2266,11 +2128,11 @@ subjects:
     name: rhai-operator-controller-manager
     namespace: redhat-ods-operator
 ---
-# Source: rhai-on-xks-chart/templates/cloudmanager/azure/rbac/role-azure-cloud-manager-leader-election-role.yaml
+# Source: rhai-on-xks-chart/templates/cloudmanager/aws/rbac/role-aws-cloud-manager-leader-election-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: azure-cloud-manager-leader-election-role
+  name: aws-cloud-manager-leader-election-role
   namespace: rhai-cloudmanager-system
 rules:
   - apiGroups:
@@ -2290,19 +2152,19 @@ rules:
       - create
       - patch
 ---
-# Source: rhai-on-xks-chart/templates/cloudmanager/azure/rbac/rolebinding-azure-cloud-manager-leader-election-rolebinding.yaml
+# Source: rhai-on-xks-chart/templates/cloudmanager/aws/rbac/rolebinding-aws-cloud-manager-leader-election-rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: azure-cloud-manager-leader-election-rolebinding
+  name: aws-cloud-manager-leader-election-rolebinding
   namespace: rhai-cloudmanager-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: azure-cloud-manager-leader-election-role
+  name: aws-cloud-manager-leader-election-role
 subjects:
   - kind: ServiceAccount
-    name: azure-cloud-manager-operator
+    name: aws-cloud-manager-operator
     namespace: rhai-cloudmanager-system
 ---
 # Source: rhai-on-xks-chart/templates/manager/service-redhat-ods-operator-controller-manager-metrics-service.yaml
@@ -2343,28 +2205,28 @@ spec:
   selector:
     name: rhai-operator
 ---
-# Source: rhai-on-xks-chart/templates/cloudmanager/azure/manager/deployment-azure-cloud-manager-operator.yaml
+# Source: rhai-on-xks-chart/templates/cloudmanager/aws/manager/deployment-aws-cloud-manager-operator.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     control-plane: controller-manager
-    name: azure-cloud-manager-operator
-  name: azure-cloud-manager-operator
+    name: aws-cloud-manager-operator
+  name: aws-cloud-manager-operator
   namespace: rhai-cloudmanager-system
 spec:
   replicas: 1
   selector:
     matchLabels:
       control-plane: controller-manager
-      name: azure-cloud-manager-operator
+      name: aws-cloud-manager-operator
   template:
     metadata:
       annotations:
         kubectl.kubernetes.io/default-container: manager
       labels:
         control-plane: controller-manager
-        name: azure-cloud-manager-operator
+        name: aws-cloud-manager-operator
     spec:
       affinity:
         nodeAffinity:
@@ -2383,12 +2245,12 @@ spec:
                     - key: name
                       operator: In
                       values:
-                        - azure-cloud-manager-operator
+                        - aws-cloud-manager-operator
                 topologyKey: kubernetes.io/hostname
               weight: 100
       containers:
         - args:
-            - azure
+            - aws
             - --health-probe-bind-address=:8081
             - --metrics-bind-address=0.0.0.0:8080
             - --leader-elect
@@ -2451,7 +2313,7 @@ spec:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
-      serviceAccountName: azure-cloud-manager-operator
+      serviceAccountName: aws-cloud-manager-operator
       terminationGracePeriodSeconds: 10
 ---
 # Source: rhai-on-xks-chart/templates/manager/deployment-rhods-operator.yaml
@@ -2875,12 +2737,12 @@ spec:
                   app.kubernetes.io/managed-by: Helm
               spec: {}
               EOF
-              echo "Creating AzureKubernetesEngine CR..."
+              echo "Creating AWSKubernetesEngine CR..."
               kubectl apply -f - <<'EOF'
               apiVersion: infrastructure.opendatahub.io/v1alpha1
-              kind: AzureKubernetesEngine
+              kind: AWSKubernetesEngine
               metadata:
-                name: default-azurekubernetesengine
+                name: default-awskubernetesengine
                 labels:
                   helm.sh/chart: HELM_CHART_VERSION_REDACTED
                   app.kubernetes.io/managed-by: Helm
@@ -3020,10 +2882,6 @@ spec:
                           - name: rhai-ca-bundle
                             mountPath: /var/run/secrets/rhai
                             readOnly: true
-                service: |
-                  metadata:
-                    annotations:
-                      service.beta.kubernetes.io/port_80_health-probe_protocol: tcp
               EOF
               echo "ConfigMap used by Gateway CR 'inference-gateway' created."
 

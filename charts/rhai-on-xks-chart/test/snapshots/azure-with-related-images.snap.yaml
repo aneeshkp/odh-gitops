@@ -2613,6 +2613,7 @@ rules:
     resources:
       - azurekubernetesengines
       - coreweavekubernetesengines
+      - awskubernetesengines
     verbs:
       - get
       - create

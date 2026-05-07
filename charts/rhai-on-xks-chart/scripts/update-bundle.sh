@@ -35,6 +35,7 @@ HELMTEMPLATE_GENERATOR_PKG="github.com/davidebianchi/helmtemplate-generator@7d76
 CLOUD_TARGETS=(
     "azure azure cloudmanager/azure"
     "coreweave coreweave cloudmanager/coreweave"
+    "aws aws cloudmanager/aws"
 )
 
 # Defaults
@@ -119,7 +120,7 @@ echo "Generating kustomization.yaml from templates..."
 # Generate main operator kustomization (creates config/rhoai/manager/kustomization.yaml)
 make -C "${ODH_OPERATOR_DIR}" manager-kustomization ODH_PLATFORM_TYPE=rhoai
 # Generate cloudmanager kustomizations
-for cloud in azure coreweave; do
+for cloud in azure coreweave aws; do
     cp -f "${ODH_OPERATOR_DIR}/config/cloudmanager/${cloud}/manager/kustomization.yaml.in" \
           "${ODH_OPERATOR_DIR}/config/cloudmanager/${cloud}/manager/kustomization.yaml"
 done

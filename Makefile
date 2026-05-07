@@ -332,9 +332,11 @@ update-image: yq ## Update xks chart images from Build-Config repo into values-$
 	$(YQ) -i '.hooks.cliImage = load("'"$${patch}"'").hooks.cliImage' "$${override}" && \
 	$(YQ) -i '.azure.cloudManager.image = load("'"$${patch}"'").azure.cloudManager.image' "$${override}" && \
 	$(YQ) -i '.coreweave.cloudManager.image = load("'"$${patch}"'").coreweave.cloudManager.image' "$${override}" && \
+	$(YQ) -i '.aws.cloudManager.image = load("'"$${patch}"'").aws.cloudManager.image' "$${override}" && \
 	echo "Created $${override}:" && \
 	echo "  rhaiOperator.image: $$($(YQ) '.rhaiOperator.image' "$${override}")" && \
 	echo "  relatedImages: $$($(YQ) '.rhaiOperator.relatedImages | length' "$${override}") entries" && \
 	echo "  hooks.cliImage: $$($(YQ) '.hooks.cliImage' "$${override}")" && \
 	echo "  azure.cloudManager.image: $$($(YQ) '.azure.cloudManager.image' "$${override}")" && \
-	echo "  coreweave.cloudManager.image: $$($(YQ) '.coreweave.cloudManager.image' "$${override}")"
+	echo "  coreweave.cloudManager.image: $$($(YQ) '.coreweave.cloudManager.image' "$${override}")" && \
+	echo "  aws.cloudManager.image: $$($(YQ) '.aws.cloudManager.image' "$${override}")"
