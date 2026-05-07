@@ -267,6 +267,72 @@
         }
       }
     },
+    "eks": {
+      "type": "object",
+      "description": "EKS (Amazon Elastic Kubernetes Service) cloud configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable EKS cloud manager resources",
+          "default": false
+        },
+        "cloudManager": {
+          "type": "object",
+          "description": "EKS Cloud Manager configuration",
+          "properties": {
+            "namespace": {
+              "type": "string",
+              "description": "Cloud Manager operator namespace",
+              "default": "rhai-cloudmanager-system"
+            },
+            "image": {
+              "type": "string",
+              "description": "Cloud Manager container image"
+            },
+            "imagePullPolicy": {
+              "type": "string",
+              "description": "Image pull policy for the Cloud Manager container",
+              "enum": ["Always", "IfNotPresent", "Never"]
+            }
+          }
+        },
+        "kubernetesEngine": {
+          "type": "object",
+          "description": "EKSKubernetesEngine CR configuration",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Create EKSKubernetesEngine CR via post-install hook",
+              "default": true
+            },
+            "spec": {
+              "type": "object",
+              "description": "EKSKubernetesEngine CR spec",
+              "properties": {
+                "dependencies": {
+                  "type": "object",
+                  "description": "Dependency configurations",
+                  "properties": {
+                    "certManager": {
+                      "$ref": "#/$defs/dependency"
+                    },
+                    "gatewayAPI": {
+                      "$ref": "#/$defs/dependency"
+                    },
+                    "lws": {
+                      "$ref": "#/$defs/dependency"
+                    },
+                    "sailOperator": {
+                      "$ref": "#/$defs/dependency"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "imagePullSecret": {
       "type": "object",
       "description": "Pull secret configuration for private registries. Use --set-file imagePullSecret.dockerConfigJson=path/to/auth.json",

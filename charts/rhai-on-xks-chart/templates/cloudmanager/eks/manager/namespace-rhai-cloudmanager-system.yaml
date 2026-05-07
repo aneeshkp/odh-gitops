@@ -1,0 +1,6 @@
+{{- if .Values.eks.enabled }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.eks.cloudManager.namespace }}
+{{- end }}
