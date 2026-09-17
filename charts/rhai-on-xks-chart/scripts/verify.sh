@@ -116,8 +116,7 @@ test_2_sail_lws_managed_unmanaged() {
 test_3_external_certmanager() {
   log "Deploying with cert-manager-operator.enabled=false (external cert-manager scenario)"
   helm_deploy \
-    --set "cert-manager-operator.enabled=false" \
-    --set "${PROV_PREFIX}.certManager.managementPolicy=Unmanaged"
+    --set "cert-manager-operator.enabled=false"
 
   # cert-manager-operator subchart resources must not be deployed
   assert_deployment_gone "cert-manager-operator"

@@ -24,8 +24,6 @@ RHAI on XKS Helm chart for non-OLM installation on non-OpenShift Kubernetes serv
 | aws.cloudManager.resources.requests.memory | string | `"512Mi"` |  |
 | aws.enabled | bool | `false` |  |
 | aws.kubernetesEngine.enabled | bool | `true` |  |
-| aws.kubernetesEngine.spec.dependencies.certManager.configuration | object | `{}` |  |
-| aws.kubernetesEngine.spec.dependencies.certManager.managementPolicy | string | `"Unmanaged"` |  |
 | aws.kubernetesEngine.spec.dependencies.gatewayAPI.configuration | object | `{}` |  |
 | aws.kubernetesEngine.spec.dependencies.gatewayAPI.managementPolicy | string | `"Managed"` |  |
 | aws.kubernetesEngine.spec.dependencies.lws.configuration.namespace | string | `"openshift-lws-operator"` |  |
@@ -43,8 +41,6 @@ RHAI on XKS Helm chart for non-OLM installation on non-OpenShift Kubernetes serv
 | azure.cloudManager.resources.requests.memory | string | `"256Mi"` |  |
 | azure.enabled | bool | `false` |  |
 | azure.kubernetesEngine.enabled | bool | `true` |  |
-| azure.kubernetesEngine.spec.dependencies.certManager.configuration | object | `{}` |  |
-| azure.kubernetesEngine.spec.dependencies.certManager.managementPolicy | string | `"Unmanaged"` |  |
 | azure.kubernetesEngine.spec.dependencies.gatewayAPI.configuration | object | `{}` |  |
 | azure.kubernetesEngine.spec.dependencies.gatewayAPI.managementPolicy | string | `"Managed"` |  |
 | azure.kubernetesEngine.spec.dependencies.lws.configuration.namespace | string | `"openshift-lws-operator"` |  |
@@ -78,8 +74,6 @@ RHAI on XKS Helm chart for non-OLM installation on non-OpenShift Kubernetes serv
 | coreweave.cloudManager.resources.requests.memory | string | `"256Mi"` |  |
 | coreweave.enabled | bool | `false` |  |
 | coreweave.kubernetesEngine.enabled | bool | `true` |  |
-| coreweave.kubernetesEngine.spec.dependencies.certManager.configuration | object | `{}` |  |
-| coreweave.kubernetesEngine.spec.dependencies.certManager.managementPolicy | string | `"Unmanaged"` |  |
 | coreweave.kubernetesEngine.spec.dependencies.gatewayAPI.configuration | object | `{}` |  |
 | coreweave.kubernetesEngine.spec.dependencies.gatewayAPI.managementPolicy | string | `"Managed"` |  |
 | coreweave.kubernetesEngine.spec.dependencies.lws.configuration.namespace | string | `"openshift-lws-operator"` |  |
