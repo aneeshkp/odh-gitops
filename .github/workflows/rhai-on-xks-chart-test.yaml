@@ -148,6 +148,12 @@ jobs:
       - name: Dump custom resources on failure
         if: failure()
         run: |
+          echo "=== Cert-manager migration ==="
+          kubectl get certmanager cluster -o yaml 2>/dev/null || echo "No CertManager CR found"
+          kubectl get deployment,pods -n cert-manager-operator -o wide 2>/dev/null || echo "No cert-manager operator resources found"
+          kubectl get lease cert-manager-operator-lock -n cert-manager-operator -o yaml 2>/dev/null || echo "No cert-manager operator Lease found"
+          kubectl get deployment,pods,certificate,issuer -n cert-manager -o wide 2>/dev/null || echo "No cert-manager operands found"
+          echo ""
           echo "=== KServe CR ==="
           kubectl get kserves.components.platform.opendatahub.io -A -o yaml 2>/dev/null || echo "No KServe CRs found"
           echo ""
