@@ -2597,8 +2597,12 @@ rules:
       - config.opendatahub.io
     resources:
       - platforms
+    resourceNames:
+      - default
     verbs:
       - get
+      - list
+      - watch
       - delete
 
 ---
