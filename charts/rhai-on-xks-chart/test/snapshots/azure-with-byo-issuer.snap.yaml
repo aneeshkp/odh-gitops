@@ -2784,7 +2784,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DEFAULT_CHARTS_PATH
               value: /opt/charts
-          image: quay.io/opendatahub/opendatahub-operator:latest
+          image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
@@ -2939,7 +2939,7 @@ spec:
               value: /opt/manifests
             - name: DEFAULT_CHARTS_PATH
               value: /opt/charts
-          image: quay.io/opendatahub/opendatahub-operator:latest
+          image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
@@ -2988,7 +2988,7 @@ spec:
             - -r
             - /opt/manifests-template/.
             - /opt/manifests/
-          image: quay.io/opendatahub/opendatahub-operator:latest
+          image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
           imagePullPolicy: Always
           name: copy-manifests
           resources:
