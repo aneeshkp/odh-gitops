@@ -14,7 +14,7 @@ RHAI on XKS Helm chart for non-OLM installation on non-OpenShift Kubernetes serv
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| aws.cloudManager.image | string | `"quay.io/opendatahub/opendatahub-operator:latest"` |  |
+| aws.cloudManager.image | string | `"quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2"` |  |
 | aws.cloudManager.imagePullPolicy | string | `"Always"` |  |
 | aws.cloudManager.namespace | string | `"rhai-cloudmanager-system"` |  |
 | aws.cloudManager.replicas | int | `1` |  |
@@ -30,7 +30,7 @@ RHAI on XKS Helm chart for non-OLM installation on non-OpenShift Kubernetes serv
 | aws.kubernetesEngine.spec.dependencies.lws.managementPolicy | string | `"Unmanaged"` |  |
 | aws.kubernetesEngine.spec.dependencies.sailOperator.configuration.namespace | string | `"istio-system"` |  |
 | aws.kubernetesEngine.spec.dependencies.sailOperator.managementPolicy | string | `"Managed"` |  |
-| azure.cloudManager.image | string | `"quay.io/opendatahub/opendatahub-operator:latest"` |  |
+| azure.cloudManager.image | string | `"quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2"` |  |
 | azure.cloudManager.imagePullPolicy | string | `"Always"` |  |
 | azure.cloudManager.namespace | string | `"rhai-cloudmanager-system"` |  |
 | azure.cloudManager.replicas | int | `1` |  |
@@ -62,7 +62,7 @@ RHAI on XKS Helm chart for non-OLM installation on non-OpenShift Kubernetes serv
 | components.kserve.gateway.allowedRoutes.namespaces | object | `{}` |  |
 | components.kserve.gateway.create | bool | `true` |  |
 | components.kserve.spec | object | `{}` |  |
-| coreweave.cloudManager.image | string | `"quay.io/opendatahub/opendatahub-operator:latest"` |  |
+| coreweave.cloudManager.image | string | `"quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2"` |  |
 | coreweave.cloudManager.imagePullPolicy | string | `"Always"` |  |
 | coreweave.cloudManager.namespace | string | `"rhai-cloudmanager-system"` |  |
 | coreweave.cloudManager.replicas | int | `1` |  |
@@ -96,7 +96,7 @@ RHAI on XKS Helm chart for non-OLM installation on non-OpenShift Kubernetes serv
 | installCRDs | bool | `true` |  |
 | labels | object | `{}` |  |
 | rhaiOperator.applicationsNamespace | string | `"redhat-ods-applications"` |  |
-| rhaiOperator.image | string | `"quay.io/opendatahub/opendatahub-operator:latest"` |  |
+| rhaiOperator.image | string | `"quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2"` |  |
 | rhaiOperator.imagePullPolicy | string | `"Always"` |  |
 | rhaiOperator.initResources.limits.cpu | string | `"100m"` |  |
 | rhaiOperator.initResources.limits.memory | string | `"512Mi"` |  |
