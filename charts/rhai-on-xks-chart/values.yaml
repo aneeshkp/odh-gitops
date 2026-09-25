@@ -19,7 +19,7 @@ rhaiOperator:
   namespace: redhat-ods-operator
   applicationsNamespace: redhat-ods-applications
   # Manager container image
-  image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2 # image is updated during Helm chart build by konflux
+  image: quay.io/opendatahub/opendatahub-operator:latest # image is updated during Helm chart build by konflux
   # Image pull policy
   imagePullPolicy: Always
   # Number of operator replicas
@@ -137,7 +137,7 @@ azure:
     # Cloud Manager operator namespace
     namespace: rhai-cloudmanager-system
     # Cloud Manager container image
-    image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
+    image: quay.io/opendatahub/opendatahub-operator:latest
     # Image pull policy
     imagePullPolicy: Always
     # Number of cloud manager replicas
@@ -174,7 +174,7 @@ coreweave:
     # Cloud Manager operator namespace
     namespace: rhai-cloudmanager-system
     # Cloud Manager container image
-    image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
+    image: quay.io/opendatahub/opendatahub-operator:latest
     # Image pull policy
     imagePullPolicy: Always
     # Number of cloud manager replicas
@@ -211,7 +211,7 @@ aws:
     # Cloud Manager operator namespace
     namespace: rhai-cloudmanager-system
     # Cloud Manager container image
-    image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
+    image: quay.io/opendatahub/opendatahub-operator:latest
     # Image pull policy
     imagePullPolicy: Always
     # Number of cloud manager replicas
