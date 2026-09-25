@@ -10,6 +10,8 @@
 # Environment variables (in addition to those in verify-helpers.sh):
 #   UPGRADE_FROM_CHART   - OCI chart URL for previous version (required)
 #   UPGRADE_FROM_VERSION - Chart version to upgrade from (required)
+#   UPGRADE_FROM_VALUES_FILE - Values file for the previous chart (default: VALUES_FILE)
+#   UPGRADE_TO_VALUES_FILE   - Values file for the local chart (default: VALUES_FILE)
 
 set -euo pipefail
 
@@ -19,6 +21,8 @@ source "${SCRIPT_DIR}/verify-helpers.sh"
 
 UPGRADE_FROM_CHART="${UPGRADE_FROM_CHART:-}"
 UPGRADE_FROM_VERSION="${UPGRADE_FROM_VERSION:-}"
+UPGRADE_FROM_VALUES_FILE="${UPGRADE_FROM_VALUES_FILE:-$VALUES_FILE}"
+UPGRADE_TO_VALUES_FILE="${UPGRADE_TO_VALUES_FILE:-$VALUES_FILE}"
 
 if [[ -z "$UPGRADE_FROM_CHART" ]]; then
   echo "ERROR: UPGRADE_FROM_CHART is required (OCI chart URL)" >&2
@@ -26,6 +30,14 @@ if [[ -z "$UPGRADE_FROM_CHART" ]]; then
 fi
 if [[ -z "$UPGRADE_FROM_VERSION" ]]; then
   echo "ERROR: UPGRADE_FROM_VERSION is required" >&2
+  exit 1
+fi
+if [[ -n "$UPGRADE_FROM_VALUES_FILE" && ! -f "$UPGRADE_FROM_VALUES_FILE" ]]; then
+  echo "ERROR: UPGRADE_FROM_VALUES_FILE not found at: $UPGRADE_FROM_VALUES_FILE" >&2
+  exit 1
+fi
+if [[ -n "$UPGRADE_TO_VALUES_FILE" && ! -f "$UPGRADE_TO_VALUES_FILE" ]]; then
+  echo "ERROR: UPGRADE_TO_VALUES_FILE not found at: $UPGRADE_TO_VALUES_FILE" >&2
   exit 1
 fi
 
@@ -137,7 +149,8 @@ cleanup_upgrade_test() {
 test_1_upgrade() {
   # Phase 1: Install old version (ensure_deployed handles stale state from prior runs)
   log "Phase 1: Installing old chart version ${UPGRADE_FROM_VERSION}..."
-  ensure_deployed --chart "$UPGRADE_FROM_CHART" --version "$UPGRADE_FROM_VERSION"
+  VALUES_FILE="$UPGRADE_FROM_VALUES_FILE" \
+    ensure_deployed --chart "$UPGRADE_FROM_CHART" --version "$UPGRADE_FROM_VERSION"
 
   # Phase 2: Record pre-upgrade state
   log "Phase 2: Recording pre-upgrade state..."
@@ -193,7 +206,8 @@ test_1_upgrade() {
 
   # Phase 3: Upgrade to local chart
   log "Phase 3: Upgrading to local chart..."
-  if ! helm_deploy --take-ownership --force-conflicts; then
+  if ! VALUES_FILE="$UPGRADE_TO_VALUES_FILE" \
+    helm_deploy --take-ownership --force-conflicts; then
     fail "Helm upgrade to local chart failed"
     return 1
   fi
@@ -265,7 +279,9 @@ echo "  Release:      $RELEASE_NAME"
 echo "  Namespace:    $NAMESPACE"
 echo "  Provider:     $CLOUD_PROVIDER"
 echo "  Upgrade from: $UPGRADE_FROM_CHART (v${UPGRADE_FROM_VERSION})"
+echo "  From values:  ${UPGRADE_FROM_VALUES_FILE:-<none>}"
 echo "  Upgrade to:   $CHART"
+echo "  To values:    ${UPGRADE_TO_VALUES_FILE:-<none>}"
 echo ""
 
 for entry in "${ALL_TESTS[@]}"; do

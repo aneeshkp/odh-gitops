@@ -297,6 +297,8 @@ XKS_NAMESPACE ?= rhai-on-xks
 XKS_CLOUD_PROVIDER ?= azure
 XKS_PULL_SECRET ?=
 XKS_VALUES_FILE ?=
+XKS_UPGRADE_FROM_VALUES_FILE ?=
+XKS_UPGRADE_TO_VALUES_FILE ?=
 XKS_UPGRADE_FROM_CHART ?= oci://registry.redhat.io/rhai/rhai-on-xks-chart
 XKS_UPGRADE_FROM_VERSION ?= v3.5.0
 
@@ -310,7 +312,7 @@ helm-install-verify-xks: ## Install and verify rhai-on-xks-chart
 
 .PHONY: helm-upgrade-verify-xks
 helm-upgrade-verify-xks: ## Upgrade test: install previous version, upgrade to current, verify
-	RELEASE_NAME="$(XKS_RELEASE_NAME)" NAMESPACE="$(XKS_NAMESPACE)" CLOUD_PROVIDER="$(XKS_CLOUD_PROVIDER)" PULL_SECRET="$(XKS_PULL_SECRET)" HELM_EXTRA_ARGS="$(HELM_EXTRA_ARGS)" UPGRADE_FROM_CHART="$(XKS_UPGRADE_FROM_CHART)" UPGRADE_FROM_VERSION="$(XKS_UPGRADE_FROM_VERSION)" VALUES_FILE="$(or $(XKS_VALUES_FILE),$(XKS_CHART_PATH)/test/values-e2e.yaml)" bash ./charts/rhai-on-xks-chart/scripts/verify-upgrade.sh
+	RELEASE_NAME="$(XKS_RELEASE_NAME)" NAMESPACE="$(XKS_NAMESPACE)" CLOUD_PROVIDER="$(XKS_CLOUD_PROVIDER)" PULL_SECRET="$(XKS_PULL_SECRET)" HELM_EXTRA_ARGS="$(HELM_EXTRA_ARGS)" UPGRADE_FROM_CHART="$(XKS_UPGRADE_FROM_CHART)" UPGRADE_FROM_VERSION="$(XKS_UPGRADE_FROM_VERSION)" UPGRADE_FROM_VALUES_FILE="$(or $(XKS_UPGRADE_FROM_VALUES_FILE),$(XKS_CHART_PATH)/test/values-e2e-upgrade-from.yaml)" UPGRADE_TO_VALUES_FILE="$(or $(XKS_UPGRADE_TO_VALUES_FILE),$(or $(XKS_VALUES_FILE),$(XKS_CHART_PATH)/test/values-e2e.yaml))" VALUES_FILE="$(XKS_CHART_PATH)/test/values-e2e-upgrade-from.yaml" bash ./charts/rhai-on-xks-chart/scripts/verify-upgrade.sh
 
 .PHONY: helm-uninstall
 helm-uninstall: ## Uninstall helm chart and all dependencies

@@ -1,0 +1,6 @@
+components:
+  kserve:
+    gateway:
+      allowedRoutes:
+        namespaces:
+          from: Same
