@@ -92,12 +92,11 @@ debug_namespace() {
     local phase
     phase=$(kubectl get pod "${pod}" -n "${ns}" -o jsonpath='{.status.phase}' 2>/dev/null)
     echo "  --- pod: ${pod} (${phase}) ---"
-    if [ "${phase}" != "Running" ] && [ "${phase}" != "Succeeded" ]; then
-      echo "  DEBUG: describe pod ${pod}:"
-      kubectl describe pod "${pod}" -n "${ns}" 2>/dev/null || true
-    else
-      kubectl logs "${pod}" -n "${ns}" --tail=50 --all-containers 2>/dev/null || true
-    fi
+    kubectl describe pod "${pod}" -n "${ns}" 2>/dev/null || true
+    echo "  DEBUG: current logs: ${pod}"
+    kubectl logs "${pod}" -n "${ns}" --tail=50 --all-containers 2>/dev/null || true
+    echo "  DEBUG: previous logs: ${pod}"
+    kubectl logs "${pod}" -n "${ns}" --previous --tail=50 --all-containers 2>/dev/null || true
   done
 }
 
@@ -133,8 +132,15 @@ wait_for_deployment() {
 
   if ! kubectl rollout status deployment "${name}" -n "${ns}" --timeout="${TIMEOUT}s"; then
     fail "Deployment '${name}' in '${ns}' did not become ready within ${TIMEOUT}s"
+    echo "  DEBUG: describe deployment ${name}:"
+    kubectl describe deployment "${name}" -n "${ns}" 2>/dev/null || true
     kubectl get deployment "${name}" -n "${ns}" -o wide 2>/dev/null || true
-    kubectl get pods -n "${ns}" 2>/dev/null || true
+    local selector
+    selector=$(kubectl get deployment "${name}" -n "${ns}" -o json 2>/dev/null \
+      | jq -r '.spec.selector.matchLabels | to_entries | map("\(.key)=\(.value)") | join(",")' 2>/dev/null || true)
+    debug_namespace "${ns}" "${selector}"
+    echo "  DEBUG: recent events in '${ns}':"
+    kubectl get events -n "${ns}" --sort-by=.lastTimestamp 2>/dev/null || true
     return 1
   fi
 
@@ -380,7 +386,15 @@ helm_deploy() {
 
 wait_ke_ready() {
   log "Waiting for $KE_KIND/$KE_NAME to be Ready (timeout: ${TIMEOUT}s)..."
-  wait_for_cr_ready "$KE_CRD" "$KE_NAME" "${PROVIDER_CR_DISPLAY[$CLOUD_PROVIDER]} '$KE_NAME'"
+  if ! wait_for_cr_ready "$KE_CRD" "$KE_NAME" "${PROVIDER_CR_DISPLAY[$CLOUD_PROVIDER]} '$KE_NAME'"; then
+    log "${PROVIDER_CR_DISPLAY[$CLOUD_PROVIDER]} did not become Ready — dumping cloud-manager diagnostics..."
+    debug_namespace "$CM_NS" "name=${CLOUD_PROVIDER}-cloud-manager-operator"
+    echo "  DEBUG: events for ${KE_NAME}:"
+    kubectl get events -A --field-selector "involvedObject.name=${KE_NAME}" --sort-by=.lastTimestamp 2>/dev/null || true
+    echo "  DEBUG: recent events in '${CM_NS}':"
+    kubectl get events -n "$CM_NS" --sort-by=.lastTimestamp 2>/dev/null || true
+    return 1
+  fi
 }
 
 ensure_deployed() {
