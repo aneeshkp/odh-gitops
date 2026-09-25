@@ -6,6 +6,7 @@ components:
           from: Same
 
 rhaiOperator:
+  image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
   relatedImages:
     - name: RELATED_IMAGE_ODH_KSERVE_AGENT_IMAGE
       value: "quay.io/rhoai/odh-kserve-agent-rhel9:rhoai-3.6-ea.2"
@@ -77,3 +78,13 @@ rhaiOperator:
       value: "quay.io/rhoai/odh-ai-gateway-controller-rhel9:rhoai-3.6-ea.2"
     - name: RELATED_IMAGE_ODH_PRAXIS_EXTPROC_IMAGE
       value: "quay.io/rhoai/odh-praxis-extproc-rhel9:rhoai-3.6-ea.2"
+
+azure:
+  cloudManager:
+    image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
+coreweave:
+  cloudManager:
+    image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
+aws:
+  cloudManager:
+    image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
