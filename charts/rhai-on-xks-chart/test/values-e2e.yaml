@@ -4,3 +4,87 @@ components:
       allowedRoutes:
         namespaces:
           from: Same
+
+rhaiOperator:
+  image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
+  relatedImages:
+    - name: RELATED_IMAGE_ODH_KSERVE_AGENT_IMAGE
+      value: "quay.io/rhoai/odh-kserve-agent-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_KSERVE_CONTROLLER_IMAGE
+      value: "quay.io/rhoai/odh-kserve-controller-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_KSERVE_LLMISVC_CONTROLLER_IMAGE
+      value: "quay.io/rhoai/odh-kserve-llmisvc-controller-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_KSERVE_ROUTER_IMAGE
+      value: "quay.io/rhoai/odh-kserve-router-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_KSERVE_STORAGE_INITIALIZER_IMAGE
+      value: "quay.io/rhoai/odh-kserve-storage-initializer-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_LATENCY_PREDICTOR_PREDICTION_IMAGE
+      value: "quay.io/rhoai/odh-latency-predictor-prediction-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_LATENCY_PREDICTOR_TRAINING_IMAGE
+      value: "quay.io/rhoai/odh-latency-predictor-training-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_VLLM_CPU_FAST_1_IMAGE
+      value: "quay.io/rhoai/odh-vllm-cpu-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_VLLM_CPU_FAST_2_IMAGE
+      value: "quay.io/rhoai/odh-vllm-cpu-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_LLM_D_ROUTER_ENDPOINT_PICKER_IMAGE
+      value: "quay.io/rhoai/odh-llm-d-router-endpoint-picker-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_LLM_D_ROUTER_DISAGG_SIDECAR_IMAGE
+      value: "quay.io/rhoai/odh-llm-d-router-disagg-sidecar-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_KUBE_RBAC_PROXY_IMAGE
+      value: "quay.io/rhoai/odh-kube-rbac-proxy-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_KSERVE_LOCALMODEL_CONTROLLER_IMAGE
+      value: "quay.io/rhoai/odh-kserve-localmodel-controller-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_KSERVE_LOCALMODELNODE_AGENT_IMAGE
+      value: "quay.io/rhoai/odh-kserve-localmodelnode-agent-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_MAAS_API_IMAGE
+      value: "quay.io/rhoai/odh-maas-api-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_MAAS_CONTROLLER_IMAGE
+      value: "quay.io/rhoai/odh-maas-controller-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_AI_GATEWAY_PAYLOAD_PROCESSING_IMAGE
+      value: "quay.io/rhoai/odh-ai-gateway-payload-processing-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_KSERVE_MODULE_OPERATOR_IMAGE
+      value: "quay.io/rhoai/odh-kserve-module-operator-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_GUARDRAILS_DETECTOR_HUGGINGFACE_RUNTIME_IMAGE
+      value: "quay.io/rhoai/odh-guardrails-detector-huggingface-runtime-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_KSERVE_AUTOGLUON_SERVER_IMAGE
+      value: "quay.io/rhoai/odh-kserve-autogluon-server-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_MLSERVER_IMAGE
+      value: "quay.io/rhoai/odh-mlserver-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_MLSERVER_CUDA_IMAGE
+      value: "quay.io/rhoai/odh-mlserver-cuda-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_MODEL_CONTROLLER_IMAGE
+      value: "quay.io/rhoai/odh-model-controller-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_MODEL_SERVING_API_IMAGE
+      value: "quay.io/rhoai/odh-model-serving-api-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_OPENVINO_MODEL_SERVER_IMAGE
+      value: "quay.io/rhoai/odh-openvino-model-server-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_VLLM_CPU_IMAGE
+      value: "quay.io/rhoai/odh-vllm-cpu-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_WORKLOAD_VARIANT_AUTOSCALER_CONTROLLER_IMAGE
+      value: "quay.io/rhoai/odh-workload-variant-autoscaler-controller-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_AI_GATEWAY_OPERATOR_IMAGE
+      value: "quay.io/rhoai/odh-ai-gateway-operator-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_LLM_D_ASYNC_IMAGE
+      value: "quay.io/rhoai/odh-llm-d-async-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_LLM_D_BATCH_GATEWAY_APISERVER_IMAGE
+      value: "quay.io/rhoai/odh-llm-d-batch-gateway-apiserver-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_LLM_D_BATCH_GATEWAY_GC_IMAGE
+      value: "quay.io/rhoai/odh-llm-d-batch-gateway-gc-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_LLM_D_BATCH_GATEWAY_OPERATOR_IMAGE
+      value: "quay.io/rhoai/odh-llm-d-batch-gateway-operator-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_LLM_D_BATCH_GATEWAY_PROCESSOR_IMAGE
+      value: "quay.io/rhoai/odh-llm-d-batch-gateway-processor-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_AI_GATEWAY_CONTROLLER_IMAGE
+      value: "quay.io/rhoai/odh-ai-gateway-controller-rhel9:rhoai-3.6-ea.2"
+    - name: RELATED_IMAGE_ODH_PRAXIS_EXTPROC_IMAGE
+      value: "quay.io/rhoai/odh-praxis-extproc-rhel9:rhoai-3.6-ea.2"
+
+azure:
+  cloudManager:
+    image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
+coreweave:
+  cloudManager:
+    image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
+aws:
+  cloudManager:
+    image: quay.io/rhoai/odh-rhel9-operator:rhoai-3.6-ea.2
