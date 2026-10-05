@@ -2,7 +2,8 @@
 # Verify rhai-on-xks-chart installation and lifecycle in a Kubernetes cluster.
 #
 # Usage:
-#   ./verify.sh              # run all tests (1-4)
+#   ./verify.sh              # run all tests (0-3) on a fresh cluster
+#   ./verify.sh 0            # run only the MaaS namespace bootstrap test
 #   ./verify.sh 1            # run only test 1 (install check)
 #   ./verify.sh 2 3          # run tests 2 and 3
 #
@@ -23,6 +24,89 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=verify-helpers.sh
 source "${SCRIPT_DIR}/verify-helpers.sh"
+
+# ─── Test 0: MaaS namespace bootstrap ──────────────────────────────────────
+
+test_0_maas_bootstrap() {
+  if [[ -z "$PULL_SECRET" ]]; then
+    fail "MaaS bootstrap test requires PULL_SECRET"
+    return 1
+  fi
+  if helm status "$RELEASE_NAME" -n "$NAMESPACE" &>/dev/null \
+    || kubectl get namespace redhat-ai-gateway-infra &>/dev/null \
+    || kubectl get secret rhai-pull-secret -n "$NAMESPACE" &>/dev/null; then
+    fail "MaaS bootstrap test requires a fresh release and infrastructure namespace"
+    return 1
+  fi
+
+  # Only the namespace hook runs; no component CRs or gateway resources are created.
+  local bootstrap_args=(
+    --set "cert-manager-operator.enabled=false"
+    --set "${CLOUD_PROVIDER}.kubernetesEngine.enabled=false"
+    --set "hooks.postInstallCrs.enabled=false"
+    --set "components.kserve.enabled=false"
+    --set "components.aigateway.enabled=true"
+    --set "components.aigateway.spec.modelsAsAService.managementState=Managed"
+    --set "components.aigateway.modelsAsAService.gateway.create=false"
+  )
+
+  log "Installing MaaS namespace bootstrap without a pre-existing pull Secret"
+  helm_deploy "${bootstrap_args[@]}" || return 1
+  assert_exists "MaaS infrastructure namespace" namespace/redhat-ai-gateway-infra
+  assert_exists "MaaS pull Secret" secret/rhai-pull-secret -n redhat-ai-gateway-infra
+  assert_exists "MaaS ServiceAccount" serviceaccount/maas-api -n redhat-ai-gateway-infra
+  assert_exists "Release pull Secret" secret/rhai-pull-secret -n "$NAMESPACE"
+  assert_not_exists "Bootstrap pull Secret (cleaned up)" secret/rhai-maas-ns-pull-secret -n "$NAMESPACE"
+  assert_not_exists "Namespace Job (cleaned up)" job/rhai-pre-install-maas-ns -n "$NAMESPACE"
+  [[ "$ASSERT_FAILED" -eq 0 ]] || return 1
+
+  local secret_uid
+  secret_uid=$(kubectl get secret rhai-pull-secret -n "$NAMESPACE" -o jsonpath='{.metadata.uid}') || return 1
+
+  log "Upgrading MaaS namespace bootstrap with the release pull Secret already present"
+  helm_deploy "${bootstrap_args[@]}" || return 1
+  if [[ "$(kubectl get secret rhai-pull-secret -n "$NAMESPACE" -o jsonpath='{.metadata.uid}')" != "$secret_uid" ]]; then
+    fail "Release pull Secret was replaced during upgrade"
+    return 1
+  fi
+  pass "Release pull Secret UID preserved during upgrade"
+  assert_not_exists "Bootstrap pull Secret (cleaned up after upgrade)" secret/rhai-maas-ns-pull-secret -n "$NAMESPACE"
+  assert_not_exists "Namespace Job (cleaned up after upgrade)" job/rhai-pre-install-maas-ns -n "$NAMESPACE"
+  [[ "$ASSERT_FAILED" -eq 0 ]] || return 1
+
+  log "Failing the namespace hook with an unpullable image"
+  if helm upgrade "$RELEASE_NAME" "$CHART" -n "$NAMESPACE" --reuse-values \
+    --set "hooks.cliImage=invalid.invalid/maas-bootstrap:missing" --timeout 20s; then
+    fail "Upgrade with an unpullable hook image unexpectedly succeeded"
+    return 1
+  fi
+  if [[ "$(kubectl get job rhai-pre-install-maas-ns -n "$NAMESPACE" -o jsonpath='{.spec.template.spec.containers[0].image}')" != "invalid.invalid/maas-bootstrap:missing" ]]; then
+    fail "Failed upgrade did not reach the namespace hook"
+    return 1
+  fi
+  if [[ "$(kubectl get secret rhai-pull-secret -n "$NAMESPACE" -o jsonpath='{.metadata.uid}')" != "$secret_uid" ]]; then
+    fail "Release pull Secret was removed or replaced during failed upgrade"
+    return 1
+  fi
+  pass "Release pull Secret UID preserved during failed upgrade"
+
+  log "Retrying the upgrade after namespace hook failure"
+  helm_deploy "${bootstrap_args[@]}" || return 1
+  if [[ "$(kubectl get secret rhai-pull-secret -n "$NAMESPACE" -o jsonpath='{.metadata.uid}')" != "$secret_uid" ]]; then
+    fail "Release pull Secret was replaced during upgrade retry"
+    return 1
+  fi
+  pass "Release pull Secret UID preserved during upgrade retry"
+  assert_not_exists "Bootstrap pull Secret (cleaned up after retry)" secret/rhai-maas-ns-pull-secret -n "$NAMESPACE"
+  assert_not_exists "Namespace Job (cleaned up after retry)" job/rhai-pre-install-maas-ns -n "$NAMESPACE"
+  [[ "$ASSERT_FAILED" -eq 0 ]] || return 1
+
+  # Simulate an interrupted bootstrap leaving its hook Secret behind.
+  kubectl create secret generic rhai-maas-ns-pull-secret -n "$NAMESPACE" --from-literal=interrupted=true || return 1
+  # Keep the same release name for the subsequent operator lifecycle tests.
+  helm uninstall "$RELEASE_NAME" -n "$NAMESPACE" --timeout "$DELETE_TIMEOUT" || return 1
+  assert_not_exists "Leftover bootstrap pull Secret (removed on uninstall)" secret/rhai-maas-ns-pull-secret -n "$NAMESPACE"
+}
 
 # ─── Test 1: Install check ─────────────────────────────────────────────────
 
@@ -101,13 +185,21 @@ test_2_sail_lws_managed_unmanaged() {
   assert_exists "openshift-lws-operator namespace (persists)" namespace/openshift-lws-operator
   assert_no_stuck_istiorevision
 
-  log "Step 2: sailOperator + lws → Managed (revert)"
+  # Revert sail before LWS: on 4-CPU CI nodes, LWS's two 1-CPU replicas otherwise
+  # claim the CPU istiod needs and leave it Pending.
+  log "Step 2: sailOperator → Managed (revert)"
   helm_deploy \
-    --set "${PROV_PREFIX}.lws.managementPolicy=Managed"
+    --set "${PROV_PREFIX}.lws.managementPolicy=Unmanaged"
   wait_ke_ready
 
   assert_cr_not_degraded "istio" "default" "Istio CR restored"
   wait_for_deployment "istiod" "istio-system"
+
+  log "Step 3: lws → Managed (revert)"
+  helm_deploy \
+    --set "${PROV_PREFIX}.lws.managementPolicy=Managed"
+  wait_ke_ready
+
   assert_cr_not_degraded "leaderworkersetoperator" "cluster" "LeaderWorkerSetOperator CR restored"
 }
 
@@ -183,6 +275,7 @@ test_5_uninstall_lifecycle() {
 # ─── Main ───────────────────────────────────────────────────────────────────
 
 ALL_TESTS=(
+  "0:MaaS namespace bootstrap:test_0_maas_bootstrap"
   "1:Install check:test_1_install_check"
   "2:sail+lws Managed→Unmanaged→Managed:test_2_sail_lws_managed_unmanaged"
   "3:external cert-manager (subchart disabled):test_3_external_certmanager"
@@ -205,7 +298,7 @@ if [[ $# -gt 0 ]]; then
       fi
     done
     if [[ "$matched" == "false" ]]; then
-      echo "WARNING: unknown test number '$arg' (available: 1-${#ALL_TESTS[@]})" >&2
+      echo "WARNING: unknown test number '$arg' (available: 0-3)" >&2
     fi
   done
 else
@@ -214,7 +307,7 @@ fi
 
 if [[ ${#TESTS_TO_RUN[@]} -eq 0 ]]; then
   echo "No matching tests found for: $*"
-  echo "Available tests: 1-${#ALL_TESTS[@]}"
+  echo "Available tests: 0-3"
   exit 1
 fi
 
