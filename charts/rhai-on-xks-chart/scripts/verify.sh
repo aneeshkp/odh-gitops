@@ -2,10 +2,13 @@
 # Verify rhai-on-xks-chart installation and lifecycle in a Kubernetes cluster.
 #
 # Usage:
-#   ./verify.sh              # run all tests (0-3) on a fresh cluster
-#   ./verify.sh 0            # run only the MaaS namespace bootstrap test
+#   ./verify.sh              # run all tests (1-4) on a disposable cluster
+#   ./verify.sh 4            # run only the MaaS namespace bootstrap test (cleans up the release first)
 #   ./verify.sh 1            # run only test 1 (install check)
 #   ./verify.sh 2 3          # run tests 2 and 3
+#
+# Test 4 uninstalls RELEASE_NAME and deletes redhat-ai-gateway-infra, including
+# its contents. Run this script only against a disposable test cluster.
 #
 # Environment variables:
 #   RELEASE_NAME     - Helm release name (default: rhai-on-xks)
@@ -25,16 +28,26 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=verify-helpers.sh
 source "${SCRIPT_DIR}/verify-helpers.sh"
 
-# ─── Test 0: MaaS namespace bootstrap ──────────────────────────────────────
+# ─── Test 4: MaaS namespace bootstrap ──────────────────────────────────────
 
-test_0_maas_bootstrap() {
+test_4_maas_bootstrap() {
   if [[ -z "$PULL_SECRET" ]]; then
     fail "MaaS bootstrap test requires PULL_SECRET"
     return 1
   fi
+
+  # Exercise installation with no existing release, MaaS namespace, or pull Secrets.
+  # Other retained namespaces and CRDs can remain from the default installation tests.
+  log "Cleaning up the test release and MaaS infrastructure namespace"
+  helm uninstall "$RELEASE_NAME" -n "$NAMESPACE" --ignore-not-found \
+    --cascade foreground --wait --timeout "$DELETE_TIMEOUT" || return 1
+  kubectl delete namespace redhat-ai-gateway-infra --ignore-not-found \
+    --wait=true --timeout="${TIMEOUT}s" || return 1
+
   if helm status "$RELEASE_NAME" -n "$NAMESPACE" &>/dev/null \
     || kubectl get namespace redhat-ai-gateway-infra &>/dev/null \
-    || kubectl get secret rhai-pull-secret -n "$NAMESPACE" &>/dev/null; then
+    || kubectl get secret rhai-pull-secret -n "$NAMESPACE" &>/dev/null \
+    || kubectl get secret rhai-maas-ns-pull-secret -n "$NAMESPACE" &>/dev/null; then
     fail "MaaS bootstrap test requires a fresh release and infrastructure namespace"
     return 1
   fi
@@ -103,7 +116,6 @@ test_0_maas_bootstrap() {
 
   # Simulate an interrupted bootstrap leaving its hook Secret behind.
   kubectl create secret generic rhai-maas-ns-pull-secret -n "$NAMESPACE" --from-literal=interrupted=true || return 1
-  # Keep the same release name for the subsequent operator lifecycle tests.
   helm uninstall "$RELEASE_NAME" -n "$NAMESPACE" --timeout "$DELETE_TIMEOUT" || return 1
   assert_not_exists "Leftover bootstrap pull Secret (removed on uninstall)" secret/rhai-maas-ns-pull-secret -n "$NAMESPACE"
 }
@@ -275,10 +287,10 @@ test_5_uninstall_lifecycle() {
 # ─── Main ───────────────────────────────────────────────────────────────────
 
 ALL_TESTS=(
-  "0:MaaS namespace bootstrap:test_0_maas_bootstrap"
   "1:Install check:test_1_install_check"
   "2:sail+lws Managed→Unmanaged→Managed:test_2_sail_lws_managed_unmanaged"
   "3:external cert-manager (subchart disabled):test_3_external_certmanager"
+  "4:MaaS namespace bootstrap:test_4_maas_bootstrap"
   # TODO: this would not work correctly, since KServe is blocking the deletion.
   # "5:Uninstall lifecycle (cleanup + cleanupNamespaces):test_5_uninstall_lifecycle"
 )
@@ -298,7 +310,7 @@ if [[ $# -gt 0 ]]; then
       fi
     done
     if [[ "$matched" == "false" ]]; then
-      echo "WARNING: unknown test number '$arg' (available: 0-3)" >&2
+      echo "WARNING: unknown test number '$arg' (available: 1-4)" >&2
     fi
   done
 else
@@ -307,7 +319,7 @@ fi
 
 if [[ ${#TESTS_TO_RUN[@]} -eq 0 ]]; then
   echo "No matching tests found for: $*"
-  echo "Available tests: 0-3"
+  echo "Available tests: 1-4"
   exit 1
 fi
 
