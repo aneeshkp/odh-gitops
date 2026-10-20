@@ -379,6 +379,13 @@ charts:
           - components.kserve.gateway.allowedRoutes.namespaces.from=Same
           - components.aigateway.modelsAsAService.gateway.allowedRoutes.namespaces.from=Same
 
+      - name: azure-with-aigateway-defaults
+        setFlags:
+          - azure.enabled=true
+          - components.aigateway.enabled=true
+          - components.kserve.gateway.allowedRoutes.namespaces.from=Same
+          - components.aigateway.modelsAsAService.gateway.allowedRoutes.namespaces.from=Same
+
       - name: azure-with-batch-gateway
         setFlags:
           - azure.enabled=true

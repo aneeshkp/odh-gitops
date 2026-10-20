@@ -108,7 +108,7 @@ components:
     # Models as a Service (MaaS) configuration
     modelsAsAService:
       # Deploy MaaS through the AIGateway module.
-      managementState: Removed
+      managementState: Managed
       # MaaS gateway configuration
       gateway:
         # Create MaaS Gateway, certs, and CA bundles via post-install hook

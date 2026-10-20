@@ -307,7 +307,7 @@
                   "type": "string",
                   "description": "Deploy MaaS through the AIGateway module.",
                   "enum": ["Managed", "Removed"],
-                  "default": "Removed"
+                  "default": "Managed"
                 },
                 "gateway": {
                   "type": "object",
