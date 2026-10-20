@@ -155,13 +155,14 @@ components:
 
 ### MaaS Gateway
 
-When AI Gateway is enabled (`components.aigateway.enabled: true`), the chart creates a MaaS Gateway CR via a post-install hook. The same `allowedRoutes` configuration is **required**:
+When AI Gateway and MaaS are enabled (`components.aigateway.enabled: true` and `components.aigateway.modelsAsAService.managementState: Managed`), the chart creates a MaaS Gateway CR via a post-install hook. The same `allowedRoutes` configuration is **required**:
 
 ```yaml
 components:
   aigateway:
     enabled: true
     modelsAsAService:
+      managementState: Managed
       gateway:
         allowedRoutes:
           namespaces:
@@ -172,6 +173,28 @@ components:
 ```
 
 When using `Selector`, the specified labels must be applied to each target namespace (e.g. `kubectl label ns <model-namespace> maas-gateway-access=true`).
+
+### Batch Gateway
+
+AI Gateway can independently manage Batch Gateway, MaaS, or both. To install the Batch Gateway operator without enabling MaaS, set the AIGateway lifecycle states explicitly:
+
+```yaml
+components:
+  aigateway:
+    enabled: true
+    modelsAsAService:
+      managementState: Removed
+      gateway:
+        create: false
+    batchGateway:
+      managementState: Managed
+```
+
+The chart creates the `Platform` and `AIGateway` lifecycle resources. The AI Gateway operator then deploys the Batch Gateway operator, using the digest-pinned related images supplied with the RHAII release.
+
+This does **not** deploy Redis or Valkey, PostgreSQL, S3-compatible storage, secrets, an `LLMBatchGateway` workload, batch API routes, or inference routing resources. Configure those separately before creating a workload CR. See the [Batch Gateway xKS guide](https://github.com/opendatahub-io/batch-gateway/tree/main/docs/guides/deploy-xks.md) for the required backing services and routing.
+
+To manage both MaaS and Batch Gateway, set both `managementState` fields to `Managed`. To keep the AI Gateway module installed but deploy neither subcomponent, set both states to `Removed`.
 
 ## Managed Dependencies
 

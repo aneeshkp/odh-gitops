@@ -57,13 +57,15 @@ RHAI on XKS Helm chart for non-OLM installation on non-OpenShift Kubernetes serv
 | cert-manager-operator.imagePullSecrets[0].name | string | `"rhai-pull-secret"` |  |
 | cert-manager-operator.operandNamespace | string | `"cert-manager"` |  |
 | cert-manager-operator.operatorNamespace | string | `"cert-manager-operator"` |  |
+| components.aigateway.batchGateway.managementState | string | `"Removed"` |  |
 | components.aigateway.enabled | bool | `false` |  |
 | components.aigateway.modelsAsAService.gateway.allowedRoutes.namespaces | object | `{}` |  |
 | components.aigateway.modelsAsAService.gateway.create | bool | `true` |  |
 | components.aigateway.modelsAsAService.gateway.gatewayClassName | string | `"istio"` |  |
 | components.aigateway.modelsAsAService.gateway.name | string | `"maas-default-gateway"` |  |
 | components.aigateway.modelsAsAService.gateway.namespace | string | `""` |  |
-| components.aigateway.spec.modelsAsAService.managementState | string | `"Managed"` |  |
+| components.aigateway.modelsAsAService.managementState | string | `"Removed"` |  |
+| components.aigateway.spec | object | `{}` |  |
 | components.kserve.enabled | bool | `true` |  |
 | components.kserve.gateway.allowedRoutes.namespaces | object | `{}` |  |
 | components.kserve.gateway.create | bool | `true` |  |
