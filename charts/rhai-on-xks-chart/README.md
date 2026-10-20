@@ -196,6 +196,8 @@ This does **not** deploy Redis or Valkey, PostgreSQL, S3-compatible storage, sec
 
 To manage both MaaS and Batch Gateway, set both `managementState` fields to `Managed`. To keep the AI Gateway module installed but deploy neither subcomponent, set both states to `Removed`.
 
+The chart lifecycle verifier does not provision Batch Gateway backing services or a workload CR. Run Batch Gateway end-to-end validation only on a disposable cluster after configuring the required inference, storage, database, and queue fixtures; do not run it against a shared xKS installation.
+
 ## Managed Dependencies
 
 The KubernetesEngine CRs (AWS, Azure, or CoreWeave) manage the following dependencies. Each can be set to `Managed` (operator handles installation and lifecycle) or `Unmanaged` (you manage it yourself):
