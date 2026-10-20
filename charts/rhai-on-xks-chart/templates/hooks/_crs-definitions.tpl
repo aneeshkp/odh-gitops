@@ -233,6 +233,15 @@ EOF
   {{- $meta := index $compRegistry $name }}
   {{- $compVals := index $.Values.components $name | default dict }}
   {{- if $compVals.enabled }}
+{{- $spec := deepCopy ($compVals.spec | default dict) }}
+{{- if eq $name "aigateway" }}
+{{- $maas := deepCopy (get $spec "modelsAsAService" | default dict) }}
+{{- $_ := set $maas "managementState" ($compVals.modelsAsAService.managementState | default "Removed") }}
+{{- $_ := set $spec "modelsAsAService" $maas }}
+{{- $batchGateway := deepCopy (get $spec "batchGateway" | default dict) }}
+{{- $_ := set $batchGateway "managementState" ($compVals.batchGateway.managementState | default "Removed") }}
+{{- $_ := set $spec "batchGateway" $batchGateway }}
+{{- end }}
 echo "Waiting for CRD {{ index $meta "resource" }}.{{ index $meta "apiGroup" }} to exist..."
 elapsed=0; while [ $elapsed -lt 300 ]; do
   kubectl get crd/{{ index $meta "resource" }}.{{ index $meta "apiGroup" }} &>/dev/null && break
@@ -248,9 +257,9 @@ metadata:
   name: {{ index $meta "crName" }}
   labels:
     {{- include "rhai-on-xks-chart.labels" $root | nindent 4 }}
-{{- if $compVals.spec }}
+{{- if $spec }}
 spec:
-  {{- $compVals.spec | toYaml | nindent 2 }}
+  {{- $spec | toYaml | nindent 2 }}
 {{- else }}
 spec: {}
 {{- end }}

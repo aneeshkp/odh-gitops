@@ -244,7 +244,7 @@ subjects:
     name: rhai-post-install-hook
     namespace: {{ .Release.Namespace }}
 {{- end }}
-{{- if and .Values.components.aigateway.enabled (eq (dig "spec" "modelsAsAService" "managementState" "" .Values.components.aigateway) "Managed") }}
+{{- if and .Values.components.aigateway.enabled (eq (.Values.components.aigateway.modelsAsAService.managementState | default "Removed") "Managed") }}
 ---
 # Permissions in kuadrant-system for Authorino TLS and CA trust setup.
 apiVersion: rbac.authorization.k8s.io/v1

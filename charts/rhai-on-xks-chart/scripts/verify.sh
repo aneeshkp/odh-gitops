@@ -64,7 +64,7 @@ test_6_maas_bootstrap() {
     --set "hooks.postInstallCrs.enabled=false"
     --set "components.kserve.enabled=false"
     --set "components.aigateway.enabled=true"
-    --set "components.aigateway.spec.modelsAsAService.managementState=Managed"
+    --set "components.aigateway.modelsAsAService.managementState=Managed"
     --set "components.aigateway.modelsAsAService.gateway.create=false"
   )
 

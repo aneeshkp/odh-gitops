@@ -101,14 +101,14 @@ components:
         namespaces: {}
 
   aigateway:
-    # Enable operator-managed AIGateway module (includes Models as a Service)
+    # Enable the operator-managed AIGateway module.
     enabled: false
-    # AIGateway component CR spec — sets modelsAsAService.managementState: Managed on the AIGateway CR
-    spec:
-      modelsAsAService:
-        managementState: Managed
+    # Additional AIGateway CR fields. Component lifecycle states below take precedence.
+    spec: {}
     # Models as a Service (MaaS) configuration
     modelsAsAService:
+      # Deploy MaaS through the AIGateway module.
+      managementState: Removed
       # MaaS gateway configuration
       gateway:
         # Create MaaS Gateway, certs, and CA bundles via post-install hook
@@ -131,6 +131,9 @@ components:
         #           maas-gateway-access: "true"
         allowedRoutes:
           namespaces: {}
+    batchGateway:
+      # Deploy the Batch Gateway operator through the AIGateway module.
+      managementState: Removed
 
 # Azure cloud configuration
 azure:
