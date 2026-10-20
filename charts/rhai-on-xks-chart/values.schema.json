@@ -297,18 +297,34 @@
             },
             "spec": {
               "type": "object",
-              "description": "AIGateway component CR spec"
+              "description": "AIGateway component CR spec",
+              "properties": {
+                "modelsAsAService": {
+                  "type": "object",
+                  "properties": {
+                    "managementState": {
+                      "type": "string",
+                      "enum": ["Managed", "Removed"],
+                      "default": "Managed"
+                    }
+                  }
+                },
+                "batchGateway": {
+                  "type": "object",
+                  "properties": {
+                    "managementState": {
+                      "type": "string",
+                      "enum": ["Managed", "Removed"],
+                      "default": "Removed"
+                    }
+                  }
+                }
+              }
             },
             "modelsAsAService": {
               "type": "object",
               "description": "Models as a Service configuration",
               "properties": {
-                "managementState": {
-                  "type": "string",
-                  "description": "Deploy MaaS through the AIGateway module.",
-                  "enum": ["Managed", "Removed"],
-                  "default": "Managed"
-                },
                 "gateway": {
                   "type": "object",
                   "description": "MaaS gateway configuration",
@@ -363,18 +379,6 @@
                       }
                     }
                   }
-                }
-              }
-            },
-            "batchGateway": {
-              "type": "object",
-              "description": "Batch Gateway configuration",
-              "properties": {
-                "managementState": {
-                  "type": "string",
-                  "description": "Deploy the Batch Gateway operator through the AIGateway module.",
-                  "enum": ["Managed", "Removed"],
-                  "default": "Removed"
                 }
               }
             }

@@ -155,14 +155,16 @@ components:
 
 ### MaaS Gateway
 
-When AI Gateway and MaaS are enabled (`components.aigateway.enabled: true` and `components.aigateway.modelsAsAService.managementState: Managed`), the chart creates a MaaS Gateway CR via a post-install hook. The same `allowedRoutes` configuration is **required**:
+When AI Gateway and MaaS are enabled (`components.aigateway.enabled: true` and `components.aigateway.spec.modelsAsAService.managementState: Managed`), the chart creates a MaaS Gateway CR via a post-install hook. The same `allowedRoutes` configuration is **required**:
 
 ```yaml
 components:
   aigateway:
     enabled: true
+    spec:
+      modelsAsAService:
+        managementState: Managed
     modelsAsAService:
-      managementState: Managed
       gateway:
         allowedRoutes:
           namespaces:
@@ -182,19 +184,18 @@ AI Gateway can independently manage Batch Gateway, MaaS, or both. To install the
 components:
   aigateway:
     enabled: true
-    modelsAsAService:
-      managementState: Removed
-      gateway:
-        create: false
-    batchGateway:
-      managementState: Managed
+    spec:
+      modelsAsAService:
+        managementState: Removed
+      batchGateway:
+        managementState: Managed
 ```
 
 The chart creates the `Platform` and `AIGateway` lifecycle resources. The AI Gateway operator then deploys the Batch Gateway operator, using the digest-pinned related images supplied with the RHAII release.
 
 This does **not** deploy Redis or Valkey, PostgreSQL, S3-compatible storage, secrets, an `LLMBatchGateway` workload, batch API routes, or inference routing resources. Configure those separately before creating a workload CR. See the [Batch Gateway xKS guide](https://github.com/opendatahub-io/batch-gateway/tree/main/docs/guides/deploy-xks.md) for the required backing services and routing.
 
-To manage both MaaS and Batch Gateway, set both `managementState` fields to `Managed`. To keep the AI Gateway module installed but deploy neither subcomponent, set both states to `Removed`.
+To manage both MaaS and Batch Gateway, set both `managementState` fields to `Managed`. To keep the AI Gateway module installed but deploy neither subcomponent, set both states to `Removed`. MaaS remains `Managed` by default when AI Gateway is enabled; Batch Gateway defaults to `Removed`.
 
 The chart lifecycle verifier does not provision Batch Gateway backing services or a workload CR. Run Batch Gateway end-to-end validation only on a disposable cluster after configuring the required inference, storage, database, and queue fixtures; do not run it against a shared xKS installation.
 

@@ -6,7 +6,7 @@
   {{- fail "components.kserve.gateway.allowedRoutes.namespaces.from is required. Choose: Selector (recommended) or Same.\nSet it in your values file or use: --set-json 'components.kserve.gateway.allowedRoutes.namespaces={\"from\":\"Selector\",\"selector\":{\"matchLabels\":{\"example-label\":\"true\"}}}'" }}
 {{- end }}
 {{- end }}
-{{- if and .Values.components.aigateway.enabled (eq (.Values.components.aigateway.modelsAsAService.managementState | default "Removed") "Managed") .Values.components.aigateway.modelsAsAService.gateway.create }}
+{{- if and (include "rhai-on-xks-chart.maasManaged" .) .Values.components.aigateway.modelsAsAService.gateway.create }}
 {{- $maasNs := ((.Values.components.aigateway.modelsAsAService.gateway.allowedRoutes | default dict).namespaces | default dict) }}
 {{- if not $maasNs.from }}
   {{- fail "components.aigateway.modelsAsAService.gateway.allowedRoutes.namespaces.from is required. Choose: Selector (recommended) or Same.\nSet it in your values file or use: --set-json 'components.aigateway.modelsAsAService.gateway.allowedRoutes.namespaces={\"from\":\"Selector\",\"selector\":{\"matchLabels\":{\"example-label\":\"true\"}}}'" }}

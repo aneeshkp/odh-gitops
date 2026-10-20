@@ -133,7 +133,7 @@ Usage:
 Return "true" when MaaS (modelsAsAService) is enabled and Managed.
 */}}
 {{- define "rhai-on-xks-chart.maasManaged" -}}
-{{- if and .Values.components.aigateway.enabled (eq (.Values.components.aigateway.modelsAsAService.managementState | default "Removed") "Managed") -}}
+{{- if and .Values.components.aigateway.enabled (eq (dig "spec" "modelsAsAService" "managementState" "" .Values.components.aigateway) "Managed") -}}
 true
 {{- end -}}
 {{- end -}}
