@@ -288,27 +288,17 @@
         },
         "aigateway": {
           "type": "object",
-          "description": "AIGateway module configuration",
+          "description": "AIGateway module configuration (includes Models as a Service)",
           "properties": {
             "enabled": {
               "type": "boolean",
-              "description": "Enable the operator-managed AIGateway module",
+              "description": "Enable operator-managed AIGateway module (includes MaaS)",
               "default": false
             },
             "spec": {
               "type": "object",
               "description": "AIGateway component CR spec",
               "properties": {
-                "modelsAsAService": {
-                  "type": "object",
-                  "properties": {
-                    "managementState": {
-                      "type": "string",
-                      "enum": ["Managed", "Removed"],
-                      "default": "Managed"
-                    }
-                  }
-                },
                 "batchGateway": {
                   "type": "object",
                   "properties": {
