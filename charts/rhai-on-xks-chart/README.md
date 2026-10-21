@@ -184,6 +184,9 @@ AI Gateway can independently manage its subcomponents. Batch Gateway defaults to
 components:
   aigateway:
     enabled: true
+    modelsAsAService:
+      gateway:
+        create: false
     spec:
       batchGateway:
         managementState: Managed

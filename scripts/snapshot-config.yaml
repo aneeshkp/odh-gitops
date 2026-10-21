@@ -390,11 +390,19 @@ charts:
         setFlags:
           - azure.enabled=true
           - components.aigateway.enabled=true
-          - components.aigateway.spec.modelsAsAService.managementState=Removed
           - components.aigateway.spec.batchGateway.managementState=Managed
           - components.aigateway.modelsAsAService.gateway.create=false
           - imagePullSecret.dockerConfigJson=testauth
           - components.kserve.gateway.allowedRoutes.namespaces.from=Same
+
+      - name: azure-with-maas-and-batch-gateway
+        setFlags:
+          - azure.enabled=true
+          - components.aigateway.enabled=true
+          - components.aigateway.spec.modelsAsAService.managementState=Managed
+          - components.aigateway.spec.batchGateway.managementState=Managed
+          - components.kserve.gateway.allowedRoutes.namespaces.from=Same
+          - components.aigateway.modelsAsAService.gateway.allowedRoutes.namespaces.from=Same
 
       - name: azure-with-modelexpress
         setFlags:
