@@ -106,7 +106,7 @@ components:
     # AIGateway component CR spec — sets modelsAsAService.managementState: Managed on the AIGateway CR.
     spec:
       modelsAsAService:
-        managementState: Managed
+        managementState: Removed
       # Batch Gateway lifecycle. Keep Removed until its RHAII release default is confirmed.
       batchGateway:
         managementState: Removed

@@ -155,12 +155,15 @@ components:
 
 ### MaaS Gateway
 
-When AI Gateway is enabled (`components.aigateway.enabled: true`), the chart creates a MaaS Gateway CR via a post-install hook. The same `allowedRoutes` configuration is **required**:
+MaaS is opt-in on xKS. Set its lifecycle state to `Managed` to deploy it; the chart creates a MaaS Gateway CR via a post-install hook. The same `allowedRoutes` configuration is **required**:
 
 ```yaml
 components:
   aigateway:
     enabled: true
+    spec:
+      modelsAsAService:
+        managementState: Managed
     modelsAsAService:
       gateway:
         allowedRoutes:
@@ -175,7 +178,7 @@ When using `Selector`, the specified labels must be applied to each target names
 
 ### Batch Gateway
 
-To install the Batch Gateway operator through the AI Gateway module, enable the module and set its Batch Gateway lifecycle state:
+Batch Gateway is opt-in on xKS and defaults to `Removed`. To install its operator through the AI Gateway module, set its lifecycle state to `Managed`:
 
 ```yaml
 components:
@@ -187,6 +190,8 @@ components:
 ```
 
 The chart creates the `Platform` and `AIGateway` lifecycle resources. The AI Gateway operator then deploys the Batch Gateway operator using the release's digest-pinned related images. Configure Batch Gateway backing services and workload resources separately.
+
+Enabling the operator alone does not make batch inference ready. Before creating an `LLMBatchGateway` workload, provide PostgreSQL metadata storage, Redis/Valkey for the default async dispatch mode, S3-compatible or supported filesystem storage, credentials, and a reachable inference gateway/model route. Prometheus is optional for Batch Gateway operation; it is used for metrics scraping and alerting. See the [Batch Gateway xKS guide](https://github.com/opendatahub-io/batch-gateway/tree/main/docs/guides/deploy-xks.md) for service and routing setup.
 
 ## Managed Dependencies
 
